@@ -17,7 +17,4 @@ Wall::~Wall()
 
 void Wall::initTexture()
 {
-	if (!texture.loadFromFile("tank1.png")) {
-
-	}
 }
