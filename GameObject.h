@@ -25,6 +25,8 @@ public:
 	virtual void initTexture();
 	void initSprite();
 
+	bool checkCollide(GameObject object);
+
 	void move();
 	void update();
 	void render(sf::RenderTarget& target);

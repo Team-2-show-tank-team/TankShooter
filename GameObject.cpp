@@ -27,6 +27,11 @@ void GameObject::initSprite()
 	this->sprite.setTexture(this->texture);
 }
 
+bool GameObject::checkCollide(GameObject object)
+{
+	return object.sprite.getGlobalBounds().intersects(this->sprite.getGlobalBounds()) ;
+}
+
 void GameObject::move()
 {
 }
