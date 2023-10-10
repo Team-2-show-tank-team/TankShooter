@@ -4,17 +4,13 @@ Wall::Wall()
 {
 }
 
-Wall::Wall(float x, float y)
+Wall::Wall(float x, float y) : GameObject(x, y)
 {
-	this->initPos = sf::Vector2f(x, y);
-	this->initTexture();
-	this->initSprite();
+
 }
 
 Wall::~Wall()
 {
 }
 
-void Wall::initTexture()
-{
-}
+

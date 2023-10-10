@@ -1,10 +1,12 @@
 #include "Game.h"
+#include "Wall1.h"
 
 Game::Game()
 {
 	this->initWindow();
 	this->initTank1();
 	this->initTank2();
+	this->initWall();
 }
 
 Game::~Game()
@@ -31,6 +33,35 @@ void Game::initTank2()
 	this->tank2 = new Tank2(2000.f, 640.f);
 }
 
+void Game::initWall()
+{
+	this->walls.push_back(new Wall1(60.f, 200.f));
+	this->walls.push_back(new Wall1(80.f, 200.f));
+	this->walls.push_back(new Wall1(1000.f, 200.f));
+}
+
+void Game::initBullets1()
+{
+	
+}
+
+void Game::initBullets2()
+{
+}
+
+bool Game::checkWalls(GameObject obj)
+{
+	bool check = true;
+
+	for (auto i : walls) {
+		if (i->checkCollide(obj)) {
+			check = false;
+		}
+	}
+
+	return check;
+}
+
 void Game::updatePollEvents()
 {
 	sf::Event e;
@@ -48,22 +79,26 @@ void Game::updatePollEvents()
 void Game::updateInput()
 {
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::A))
-		this->tank1->move(-1.f, 0.f);
+		if(checkWalls(*this->tank1))
+		this->tank1->rotateDown();
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::D))
-		this->tank1->move(1.0f, 0.f);
+		if (checkWalls(*this->tank1))
+		this->tank1->rotateUp();
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::W))
-		this->tank1->move(0.f, -1.f);
+		if (checkWalls(*this->tank1))
+		this->tank1->moveOn();
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::S))
-		this->tank1->move(0.f, 1.f);
+		if (checkWalls(*this->tank1))
+		this->tank1->moveBack();
 
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
-		this->tank2->move(-1.f, 0.f);
+		this->tank2->rotateDown();
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
-		this->tank2->move(1.0f, 0.f);
+		this->tank2->rotateUp();
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
-		this->tank2->move(0.f, -1.f);
+		this->tank2->moveBack();
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down))
-		this->tank2->move(0.f, 1.f);
+		this->tank2->moveOn();
 
 }
 
@@ -84,6 +119,10 @@ void Game::render()
 	this->tank1->render(*this->window);
 
 	this->tank2->render(*this->window);
+
+	for (auto i : this->walls) {
+		i->render(*this->window);
+	}
 
 	this->window->display();
 }
