@@ -1,8 +1,9 @@
 #pragma once
 #include "Bullet.h"
-class Bullet2 : Bullet
+class Bullet2 : public Bullet
 {
-	Bullet2(float x, float y);
+public:
+	Bullet2(float x, float y, float angle);
 	virtual ~Bullet2();
 
 	void initTexture() override;

@@ -9,9 +9,13 @@ public:
 	Tank(float x, float y);
 	virtual ~Tank();
 
-	int movementSpeed = 10.f;
+	int movementSpeed = 5.f;
 
-	int rotateSpeed = 5.f;
+	int rotateSpeed = 1.f;
+
+
+
+	void checkOutScreen();
 
 	void rotateUp();
 

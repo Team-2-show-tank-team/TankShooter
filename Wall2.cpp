@@ -1,6 +1,6 @@
 #include "Wall2.h"
 
-Wall2::Wall2(float x, float y)
+Wall2::Wall2(float x, float y) : Wall(x, y)
 {
 	this->initTexture();
 	this->initSprite();

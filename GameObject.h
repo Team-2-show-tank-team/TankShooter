@@ -27,6 +27,9 @@ public:
 
 	bool checkCollide(GameObject object);
 
+	bool checkObjectCollide(std::vector<GameObject*> objects);
+
+
 	void move();
 	void update();
 	void render(sf::RenderTarget& target);

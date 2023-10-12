@@ -9,6 +9,8 @@
 #include "Tank2.h"
 #include "Bullet.h"
 #include "Wall.h"
+#include "Bullet1.h"
+#include "Bullet2.h"
 
 class Game
 {
@@ -20,10 +22,10 @@ public:
 
 	sf::RenderWindow* window;
 	sf::Texture backgroundTexture;
-	sf::Sprite background;
+	sf::Sprite background;	
 
-	std::vector<Bullet> bullet1;
-	std::vector<Bullet> bullet2;
+	std::vector<Bullet*> bullet1;
+	std::vector<Bullet*> bullet2;
 
 	std::vector<Wall*> walls;
 
@@ -38,6 +40,8 @@ public:
 
 	void initBullets1();
 	void initBullets2();
+
+	void updateBullet();
 
 	bool checkWalls(GameObject obj);
 

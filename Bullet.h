@@ -4,11 +4,16 @@
 class Bullet : public GameObject
 {
 public:
-	Bullet();
-	Bullet(float x, float y);
+
+	Bullet(float x, float y, float angle);
 	virtual ~Bullet();
 
-	int movementSpeed = 20.f;
+	void move();
+
+	bool checkOutScreen();
+
+	int movementSpeed = 10.f;
+	float angle;
 
 };
 

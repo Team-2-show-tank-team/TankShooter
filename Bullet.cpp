@@ -1,15 +1,44 @@
 #include "Bullet.h"
 
-Bullet::Bullet() : GameObject()
+
+Bullet::Bullet(float x, float y, float goc) : GameObject(x, y)
 {
-	
+    this->angle = goc;
 }
 
-Bullet::Bullet(float x, float y) : GameObject(x, y)
-{
-}
 
 Bullet::~Bullet()
 {
+}
+
+void Bullet::move()
+{
+    float radianAngle = this->angle * (3.14159f / 180.0f);
+    float moveX = std::cos(radianAngle) * this->movementSpeed;
+    float moveY = std::sin(radianAngle) * this->movementSpeed;
+
+    this->sprite.move(moveX, moveY);
+}
+
+bool Bullet::checkOutScreen()
+{
+	sf::Vector2f spritePosition = this->sprite.getPosition();
+	sf::FloatRect spriteBounds = this->sprite.getGlobalBounds();
+
+	if (spritePosition.x < 0) {
+		return true;
+	}
+	if (spritePosition.x + spriteBounds.width / 2 > 2160) {
+		return true;
+	}
+	if (spritePosition.y < 0) {
+		return true;
+	}
+	if (spritePosition.y + spriteBounds.height / 2 > 1280) {
+		return true;
+	}
+
+
+	return false;
 }
 

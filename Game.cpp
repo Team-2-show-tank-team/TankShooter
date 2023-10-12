@@ -1,5 +1,7 @@
 #include "Game.h"
 #include "Wall1.h"
+#include "Wall2.h"
+
 
 Game::Game()
 {
@@ -25,19 +27,24 @@ void Game::initWindow()
 
 void Game::initTank1()
 {
-	this->tank1 = new Tank1(20.f, 640.f);
+	this->tank1 = new Tank1(200.f, 650.f);
+	std::cout << "x: " << tank1->texture.getSize().x / 2.0f << " y: " << tank1->texture.getSize().y / 2.0f;
 }
 
 void Game::initTank2()
 {
-	this->tank2 = new Tank2(2000.f, 640.f);
+	this->tank2 = new Tank2(1900.f, 640.f);
 }
 
 void Game::initWall()
 {
-	this->walls.push_back(new Wall1(60.f, 200.f));
-	this->walls.push_back(new Wall1(80.f, 200.f));
-	this->walls.push_back(new Wall1(1000.f, 200.f));
+	this->walls.push_back(new Wall1(330.f, 520.f));
+	this->walls.push_back(new Wall1(410.f, 650.f));
+	this->walls.push_back(new Wall1(330.f, 780.f));
+
+	this->walls.push_back(new Wall2(1820.f, 520.f));
+	this->walls.push_back(new Wall2(1720.f, 650.f));
+	this->walls.push_back(new Wall2(1820.f, 780.f));
 }
 
 void Game::initBullets1()
@@ -47,6 +54,46 @@ void Game::initBullets1()
 
 void Game::initBullets2()
 {
+}
+
+void Game::updateBullet()
+{
+
+	for (int i = 0; i < bullet1.size(); i++) {
+		bullet1[i]->move();
+		if (bullet1[i]->checkOutScreen()) {
+			bullet1.erase(bullet1.begin() + i);
+			i--;
+			continue;
+		}
+
+		for (auto wall : walls) {
+			if (bullet1[i]->checkCollide(*wall)) {
+				bullet1.erase(bullet1.begin() + i);
+				i--;
+				break;
+			}
+		}
+	}
+
+	
+
+	for (int i = 0; i < bullet2.size(); i++) {
+		bullet2[i]->move();
+		if (bullet2[i]->checkOutScreen() ) {
+			bullet2.erase(bullet2.begin() + i);
+			continue;
+		}
+		for (auto wall : walls) {
+			if (bullet2[i]->checkCollide(*wall)) {
+				bullet2.erase(bullet2.begin() + i);
+				i--;
+				break;
+			}
+		}
+	}
+
+
 }
 
 bool Game::checkWalls(GameObject obj)
@@ -66,12 +113,23 @@ void Game::updatePollEvents()
 {
 	sf::Event e;
 
+
 	while (this->window->pollEvent(e)) {
 		if (e.Event::type == sf::Event::Closed)
 			this->window->close();
 		if (e.Event::KeyPressed) {
 			if (e.Event::key.code == sf::Keyboard::Escape)
 				this->window->close();
+			if (e.key.code == sf::Keyboard::J) {
+				if (this->bullet1.size() <= 5) {
+					this->bullet1.push_back(new Bullet1(tank1->sprite.getPosition().x, tank1->sprite.getPosition().y, tank1->sprite.getRotation()));
+				}
+			}
+			if (e.key.code == sf::Keyboard::Enter) {
+				if (this->bullet2.size() <= 5) {
+					this->bullet2.push_back(new Bullet2(tank2->sprite.getPosition().x, tank2->sprite.getPosition().y, tank2->sprite.getRotation()+ 180.f));
+				}
+			}
 		}
 	}
 }
@@ -79,16 +137,12 @@ void Game::updatePollEvents()
 void Game::updateInput()
 {
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::A))
-		if(checkWalls(*this->tank1))
 		this->tank1->rotateDown();
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::D))
-		if (checkWalls(*this->tank1))
 		this->tank1->rotateUp();
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::W))
-		if (checkWalls(*this->tank1))
 		this->tank1->moveOn();
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::S))
-		if (checkWalls(*this->tank1))
 		this->tank1->moveBack();
 
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
@@ -100,6 +154,11 @@ void Game::updateInput()
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down))
 		this->tank2->moveOn();
 
+
+
+	this->tank1->checkOutScreen();
+	this->tank2->checkOutScreen();
+
 }
 
 
@@ -107,6 +166,7 @@ void Game::updateInput()
 void Game::update()
 {
 	this->updatePollEvents();
+	this->updateBullet();
 	this->updateInput();
 }
 
@@ -118,7 +178,19 @@ void Game::render()
 
 	this->tank1->render(*this->window);
 
+	for (auto i : this->bullet1) {
+		i->render(*this->window);
+	}
+
+	for (auto i : this->bullet2) {
+		i->render(*this->window);
+	}
+
 	this->tank2->render(*this->window);
+
+	
+
+	
 
 	for (auto i : this->walls) {
 		i->render(*this->window);
