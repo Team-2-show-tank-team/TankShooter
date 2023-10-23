@@ -1,11 +1,12 @@
 #include "Game.h"
-#include "Wall1.h"
-#include "Wall2.h"
+#include "Wall.h"
+
 
 
 Game::Game()
 {
 	this->initWindow();
+	this->initTextures();
 	this->initTank1();
 	this->initTank2();
 	this->initWall();
@@ -27,34 +28,72 @@ void Game::initWindow()
 
 void Game::initTank1()
 {
-	this->tank1 = new Tank1(200.f, 650.f);
-	std::cout << "x: " << tank1->texture.getSize().x / 2.0f << " y: " << tank1->texture.getSize().y / 2.0f;
+	this->tank1 = new Tank(200.f, 650.f, textures["tank1"]);
 }
 
 void Game::initTank2()
 {
-	this->tank2 = new Tank2(1900.f, 640.f);
+	this->tank2 = new Tank(1900.f, 640.f, textures["tank2"]);
 }
 
 void Game::initWall()
 {
-	this->walls.push_back(new Wall1(330.f, 520.f));
-	this->walls.push_back(new Wall1(410.f, 650.f));
-	this->walls.push_back(new Wall1(330.f, 780.f));
+	this->walls.push_back(new Wall(330.f, 520.f, textures["wall1"]));
+	this->walls.push_back(new Wall(410.f, 650.f, textures["wall1"]));
+	this->walls.push_back(new Wall(330.f, 780.f, textures["wall1"]));
 
-	this->walls.push_back(new Wall2(1820.f, 520.f));
-	this->walls.push_back(new Wall2(1720.f, 650.f));
-	this->walls.push_back(new Wall2(1820.f, 780.f));
+	this->walls.push_back(new Wall(1820.f, 520.f, textures["wall2"]));
+	this->walls.push_back(new Wall(1720.f, 650.f, textures["wall2"]));
+	this->walls.push_back(new Wall(1820.f, 780.f, textures["wall2"]));
 }
 
-void Game::initBullets1()
+void Game::initTextures()
 {
+	//bullet 1
+	sf::Texture texture1;
+	texture1.loadFromFile("Textures\\bullet1.png");
+
+	this->textures["bullet1"] = texture1;
+
+	//bullet 2
+	sf::Texture texture2;
+	texture2.loadFromFile("Textures\\bullet2.png");
+
+	this->textures["bullet2"] = texture2;
 	
+	//tank 1
+	sf::Texture texture3;
+	texture3.loadFromFile("Textures\\tank1.png");
+
+	this->textures["tank1"] = texture3;
+
+	//tank 2
+	sf::Texture texture4;
+	texture4.loadFromFile("Textures\\tank2.png");
+
+	this->textures["tank2"] = texture4;
+
+	//wall 1
+	sf::Texture texture5;
+	texture5.loadFromFile("Textures\\wall1.png");
+
+	this->textures["wall1"] = texture5;
+
+	//wall 2
+	sf::Texture texture6;
+	texture6.loadFromFile("Textures\\wall2.png");
+
+	this->textures["wall2"] = texture6;
+
+	//x
+	sf::Texture texture7;
+	texture6.loadFromFile("Textures\\x.png");
+
+	this->textures["x"] = texture7;
+
 }
 
-void Game::initBullets2()
-{
-}
+
 
 void Game::updateBullet()
 {
@@ -77,10 +116,9 @@ void Game::updateBullet()
 	}
 
 	
-
 	for (int i = 0; i < bullet2.size(); i++) {
 		bullet2[i]->move();
-		if (bullet2[i]->checkOutScreen() ) {
+		if (bullet2[i]->checkOutScreen()) {
 			bullet2.erase(bullet2.begin() + i);
 			continue;
 		}
@@ -92,6 +130,7 @@ void Game::updateBullet()
 			}
 		}
 	}
+	
 
 
 }
@@ -109,6 +148,24 @@ bool Game::checkWalls(GameObject obj)
 	return check;
 }
 
+void Game::checkBullet1Wall()
+{
+	for (int i = 0; i < bullet2.size(); i++) {
+		bullet2[i]->move();
+		if (bullet2[i]->checkOutScreen()) {
+			bullet2.erase(bullet2.begin() + i);
+			continue;
+		}
+		//for (auto wall : walls) {
+		//	if (bullet2[i]->checkCollide(*wall)) {
+		//		bullet2.erase(bullet2.begin() + i);
+		//		i--;
+		//		break;
+		//	}
+		//}
+	}
+}
+
 void Game::updatePollEvents()
 {
 	sf::Event e;
@@ -122,12 +179,12 @@ void Game::updatePollEvents()
 				this->window->close();
 			if (e.key.code == sf::Keyboard::J) {
 				if (this->bullet1.size() <= 5) {
-					this->bullet1.push_back(new Bullet1(tank1->sprite.getPosition().x, tank1->sprite.getPosition().y, tank1->sprite.getRotation()));
+					this->bullet1.push_back(new Bullet(tank1->sprite.getPosition().x, tank1->sprite.getPosition().y, textures["bullet1"], tank1->sprite.getRotation()));
 				}
 			}
 			if (e.key.code == sf::Keyboard::Enter) {
 				if (this->bullet2.size() <= 5) {
-					this->bullet2.push_back(new Bullet2(tank2->sprite.getPosition().x, tank2->sprite.getPosition().y, tank2->sprite.getRotation()+ 180.f));
+					this->bullet2.push_back(new Bullet(tank2->sprite.getPosition().x, tank2->sprite.getPosition().y, textures["bullet2"], tank2->sprite.getRotation() + 180.f));
 				}
 			}
 		}

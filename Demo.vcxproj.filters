@@ -27,28 +27,10 @@
     <ClCompile Include="Tank.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Tank1.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Tank2.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Bullet.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Wall.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Bullet1.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Bullet2.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Wall1.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Wall2.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -62,28 +44,10 @@
     <ClInclude Include="Tank.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Tank1.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Tank2.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Bullet.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Wall.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Bullet1.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Bullet2.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Wall1.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Wall2.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

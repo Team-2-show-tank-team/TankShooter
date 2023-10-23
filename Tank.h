@@ -1,19 +1,20 @@
 #pragma once
 
+#include "Wall.h"
 #include "GameObject.h"
 
 class Tank : public GameObject
 {
 public:
 
-	Tank(float x, float y);
+	Tank(float x, float y, sf::Texture textureM);
 	virtual ~Tank();
 
-	int movementSpeed = 5.f;
+	float movementSpeed = 5.f;
 
-	int rotateSpeed = 1.f;
+	float rotateSpeed = 1.f;
 
-
+	bool checkWallCollide(std::vector<Wall*> walls);
 
 	void checkOutScreen();
 

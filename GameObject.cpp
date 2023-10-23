@@ -2,14 +2,6 @@
 
 
 
-GameObject::GameObject()
-{
-}
-
-GameObject::GameObject(float x, float y)
-{	
-	this->setInitPos(x, y);
-}
 
 void GameObject::setInitPos(float x, float y)
 {
@@ -34,15 +26,6 @@ bool GameObject::checkCollide(GameObject object)
 	return object.sprite.getGlobalBounds().intersects(this->sprite.getGlobalBounds());
 }
 
-bool GameObject::checkObjectCollide(std::vector<GameObject*> objects)
-{
-	for (auto object : objects) {
-		if (object->sprite.getGlobalBounds().intersects(this->sprite.getGlobalBounds())) {
-			return true;
-		}
-	}
-	return false;
-}
 
 
 
@@ -58,6 +41,14 @@ void GameObject::render(sf::RenderTarget& target)
 {
 	target.draw(this->sprite);	
 }
+
+GameObject::GameObject(float x, float y, sf::Texture textureM)
+{
+	this->texture = textureM;
+	this->initSprite();
+	this->setInitPos(x, y);
+}
+
 
 GameObject::~GameObject()
 {

@@ -2,13 +2,23 @@
 
 
 
-Tank::Tank(float x, float y) : GameObject(x, y)
+Tank::Tank(float x, float y, sf::Texture textureM) : GameObject(x, y, textureM)
 {
-
+	
 }
 
 Tank::~Tank()
 {
+}
+
+bool Tank::checkWallCollide(std::vector<Wall*> walls)
+{
+	for (auto i : walls) {
+		if (checkCollide(*i)) {
+			return true;
+		}
+	}
+	return false;
 }
 
 void Tank::checkOutScreen()

@@ -5,12 +5,10 @@
 #include "SFML/System.hpp"
 #include "SFML/Window.hpp"
 
-#include"Tank1.h"
-#include "Tank2.h"
+#include"Tank.h"
 #include "Bullet.h"
 #include "Wall.h"
-#include "Bullet1.h"
-#include "Bullet2.h"
+
 
 class Game
 {
@@ -24,13 +22,15 @@ public:
 	sf::Texture backgroundTexture;
 	sf::Sprite background;	
 
+	std::map<std::string, sf::Texture> textures;
+
 	std::vector<Bullet*> bullet1;
 	std::vector<Bullet*> bullet2;
 
 	std::vector<Wall*> walls;
 
-	Tank1* tank1;
-	Tank2* tank2;
+	Tank* tank1;
+	Tank* tank2;
 
 
 	void initTank1();
@@ -38,12 +38,15 @@ public:
 
 	void initWall();
 
-	void initBullets1();
-	void initBullets2();
+	void initTextures();
+
 
 	void updateBullet();
 
 	bool checkWalls(GameObject obj);
+
+	void checkBullet1Wall();
+
 
 	void updatePollEvents();
 	void updateInput();

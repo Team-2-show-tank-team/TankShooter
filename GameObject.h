@@ -10,10 +10,10 @@
 class GameObject
 {
 public:
-
-	GameObject();
-	GameObject(float x, float y);
+	GameObject(float x, float y, sf::Texture textureM);
 	virtual ~GameObject();
+
+
 
 	sf::Texture texture;
 	sf::Sprite sprite;
@@ -26,9 +26,6 @@ public:
 	void initSprite();
 
 	bool checkCollide(GameObject object);
-
-	bool checkObjectCollide(std::vector<GameObject*> objects);
-
 
 	void move();
 	void update();

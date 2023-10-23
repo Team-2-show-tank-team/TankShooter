@@ -1,11 +1,13 @@
 #include "Bullet.h"
 
 
-Bullet::Bullet(float x, float y, float goc) : GameObject(x, y)
-{
-    this->angle = goc;
-}
 
+
+Bullet::Bullet(float x, float y, sf::Texture textureM, float angleM) : GameObject(x, y, textureM)
+{
+	this->angle = angleM;
+	this->sprite.setRotation(angle);
+}
 
 Bullet::~Bullet()
 {
@@ -41,4 +43,6 @@ bool Bullet::checkOutScreen()
 
 	return false;
 }
+
+
 
