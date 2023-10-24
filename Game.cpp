@@ -19,7 +19,7 @@ Game::~Game()
 
 void Game::initWindow()
 {
-	this->window = new sf::RenderWindow(sf::VideoMode::getDesktopMode(), "Tank Shooter", sf::Style::Fullscreen);
+	this->window = new sf::RenderWindow(sf::VideoMode(2160, 1280), "Tank Shooter");
 	this->window->setFramerateLimit(144);
 	this->window->setVerticalSyncEnabled(false);
 
