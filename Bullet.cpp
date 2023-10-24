@@ -11,6 +11,7 @@ Bullet::Bullet(float x, float y, sf::Texture textureM, float angleM) : GameObjec
 
 Bullet::~Bullet()
 {
+	delete &this->sprite;
 }
 
 void Bullet::move()

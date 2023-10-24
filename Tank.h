@@ -10,10 +10,10 @@ public:
 	Tank(float x, float y, sf::Texture textureM);
 	virtual ~Tank();
 
-	float movementSpeed = 5.f;
+	float movementSpeed = 4.f;
 
-	float rotateSpeed = 1.f;
-
+	float rotateSpeed = 2.f;
+	 
 	bool checkWallCollide(std::vector<Wall*> walls);
 
 	void checkOutScreen();
@@ -25,7 +25,7 @@ public:
 	void moveOn();
 
 	void moveBack();
-	
+
 	void move(const float dirX, const float dirY);
 };
 

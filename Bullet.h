@@ -13,12 +13,10 @@ public:
 
 	bool checkOutScreen();
 
-	int movementSpeed = 10.f;
+	int movementSpeed = 15.f;
 
 	float angle;
 
-
-	//bool checkWallColide(std::vector<Wall*> walls);
 
 };
 

@@ -15,7 +15,12 @@ class Game
 public:
 	Game();
 	virtual ~Game();	
-	
+
+
+	sf::Text text;
+	sf::Font font;
+
+	bool isEndGame = false;
 
 
 	sf::RenderWindow* window;
@@ -36,6 +41,8 @@ public:
 	void initTank1();
 	void initTank2();
 
+	void initString();
+
 	void initWall();
 
 	void initTextures();
@@ -43,9 +50,11 @@ public:
 
 	void updateBullet();
 
+	void checkTank(Tank* tank);
+
 	bool checkWalls(GameObject obj);
 
-	void checkBullet1Wall();
+	
 
 
 	void updatePollEvents();

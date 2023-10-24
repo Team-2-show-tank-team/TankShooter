@@ -10,6 +10,7 @@ Game::Game()
 	this->initTank1();
 	this->initTank2();
 	this->initWall();
+	this->initString();
 }
 
 Game::~Game()
@@ -18,9 +19,11 @@ Game::~Game()
 
 void Game::initWindow()
 {
-	this->window = new sf::RenderWindow(sf::VideoMode(2160, 1280), "Tank Shooter");
+	this->window = new sf::RenderWindow(sf::VideoMode::getDesktopMode(), "Tank Shooter", sf::Style::Fullscreen);
 	this->window->setFramerateLimit(144);
 	this->window->setVerticalSyncEnabled(false);
+
+
 
 	backgroundTexture.loadFromFile("Textures\\background.png");
 	background.setTexture(backgroundTexture);
@@ -34,6 +37,18 @@ void Game::initTank1()
 void Game::initTank2()
 {
 	this->tank2 = new Tank(1900.f, 640.f, textures["tank2"]);
+}
+
+void Game::initString()
+{
+
+	font.loadFromFile("arial.ttf");
+
+	this->text.setFont(font);
+	this->text.setCharacterSize(180);
+	this->text.setPosition(300, 600);
+	this->text.setFillColor(sf::Color::Red);
+	this->text.setStyle(sf::Text::Bold);
 }
 
 void Game::initWall()
@@ -100,6 +115,13 @@ void Game::updateBullet()
 
 	for (int i = 0; i < bullet1.size(); i++) {
 		bullet1[i]->move();
+		
+		if (bullet1[i]->checkCollide(*this->tank2)) {
+			text.setString("Player 1 wins! Hoang nguuu\nBam Backspace to restart");
+			this->isEndGame = true;
+			return;
+		}
+
 		if (bullet1[i]->checkOutScreen()) {
 			bullet1.erase(bullet1.begin() + i);
 			i--;
@@ -113,11 +135,20 @@ void Game::updateBullet()
 				break;
 			}
 		}
+
+		
 	}
 
 	
 	for (int i = 0; i < bullet2.size(); i++) {
 		bullet2[i]->move();
+
+		if (bullet2[i]->checkCollide(*this->tank1)) {
+			text.setString("Player 2 wins! Dat nguuu\nBam Backspace to restart");
+			this->isEndGame = true;
+			return;
+		}
+
 		if (bullet2[i]->checkOutScreen()) {
 			bullet2.erase(bullet2.begin() + i);
 			continue;
@@ -128,12 +159,25 @@ void Game::updateBullet()
 				i--;
 				break;
 			}
+		}		
+	}
+}
+
+void Game::checkTank(Tank* tank)
+{	
+	for (int i = 0; i < 6; i++) {
+		if (tank->checkCollide(*walls[i])) {
+			if (i < 3) {
+				tank->sprite.setPosition(1750.f, 1190.f);
+			}
+			else {
+				tank->sprite.setPosition(500.f, 1190.f);
+			}
+			return;
 		}
 	}
-	
-
-
 }
+
 
 bool Game::checkWalls(GameObject obj)
 {
@@ -148,23 +192,6 @@ bool Game::checkWalls(GameObject obj)
 	return check;
 }
 
-void Game::checkBullet1Wall()
-{
-	for (int i = 0; i < bullet2.size(); i++) {
-		bullet2[i]->move();
-		if (bullet2[i]->checkOutScreen()) {
-			bullet2.erase(bullet2.begin() + i);
-			continue;
-		}
-		//for (auto wall : walls) {
-		//	if (bullet2[i]->checkCollide(*wall)) {
-		//		bullet2.erase(bullet2.begin() + i);
-		//		i--;
-		//		break;
-		//	}
-		//}
-	}
-}
 
 void Game::updatePollEvents()
 {
@@ -178,13 +205,21 @@ void Game::updatePollEvents()
 			if (e.Event::key.code == sf::Keyboard::Escape)
 				this->window->close();
 			if (e.key.code == sf::Keyboard::J) {
-				if (this->bullet1.size() <= 5) {
+				if (this->bullet1.size() < 1) {
 					this->bullet1.push_back(new Bullet(tank1->sprite.getPosition().x, tank1->sprite.getPosition().y, textures["bullet1"], tank1->sprite.getRotation()));
 				}
 			}
 			if (e.key.code == sf::Keyboard::Enter) {
-				if (this->bullet2.size() <= 5) {
+				if (this->bullet2.size() < 1) {
 					this->bullet2.push_back(new Bullet(tank2->sprite.getPosition().x, tank2->sprite.getPosition().y, textures["bullet2"], tank2->sprite.getRotation() + 180.f));
+				}
+			}
+			if (e.key.code == sf::Keyboard::BackSpace) {
+				if(this->isEndGame)
+				{
+					this->isEndGame = false;
+					initTank1();
+					initTank2();
 				}
 			}
 		}
@@ -216,6 +251,9 @@ void Game::updateInput()
 	this->tank1->checkOutScreen();
 	this->tank2->checkOutScreen();
 
+	checkTank(tank1);
+	checkTank(tank2);
+
 }
 
 
@@ -223,6 +261,7 @@ void Game::updateInput()
 void Game::update()
 {
 	this->updatePollEvents();
+	if(!isEndGame)
 	this->updateBullet();
 	this->updateInput();
 }
@@ -233,25 +272,29 @@ void Game::render()
 
 	this->window->draw(background);
 
-	this->tank1->render(*this->window);
+	if (isEndGame) {
+		bullet1.clear();
+		bullet2.clear();
+		this->window->draw(text);
+	}
+	else {
+		this->tank1->render(*this->window);
 
-	for (auto i : this->bullet1) {
-		i->render(*this->window);
+		for (auto i : this->bullet1) {
+			i->render(*this->window);
+		}
+
+		for (auto i : this->bullet2) {
+			i->render(*this->window);
+		}
+
+		this->tank2->render(*this->window);
+
+		for (auto i : this->walls) {
+			i->render(*this->window);
+		}
 	}
 
-	for (auto i : this->bullet2) {
-		i->render(*this->window);
-	}
-
-	this->tank2->render(*this->window);
-
-	
-
-	
-
-	for (auto i : this->walls) {
-		i->render(*this->window);
-	}
 
 	this->window->display();
 }
