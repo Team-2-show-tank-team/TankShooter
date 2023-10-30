@@ -11,6 +11,7 @@ Game::Game()
 	this->initTank2();
 	this->initWall();
 	this->initString();
+	this->initShield();
 }
 
 Game::~Game()
@@ -106,6 +107,12 @@ void Game::initTextures()
 
 	this->textures["x"] = texture7;
 
+	//shield
+	sf::Texture texture8;
+	texture8.loadFromFile("Textures\\shield.png");
+
+	this->textures["shield"] = texture8;
+
 }
 
 
@@ -117,9 +124,16 @@ void Game::updateBullet()
 		bullet1[i]->move();
 		
 		if (bullet1[i]->checkCollide(*this->tank2)) {
-			text.setString("Player 1 wins! Hoang nguuu\nBam Backspace to restart");
-			this->isEndGame = true;
-			return;
+			if(!tank2->shieldsCount){
+				text.setString("Player 1 wins! Hoang nguuu\nBam Backspace to restart");
+				this->isEndGame = true;
+				return;
+			}
+			else {
+				tank2->shieldsCount--;
+				bullet1.clear();
+				break;
+			}
 		}
 
 		if (bullet1[i]->checkOutScreen()) {
@@ -144,9 +158,16 @@ void Game::updateBullet()
 		bullet2[i]->move();
 
 		if (bullet2[i]->checkCollide(*this->tank1)) {
-			text.setString("Player 2 wins! Dat nguuu\nBam Backspace to restart");
-			this->isEndGame = true;
-			return;
+			if(!tank1->shieldsCount){
+				text.setString("Player 2 wins! Dat nguuu\nBam Backspace to restart");
+				this->isEndGame = true;
+				return;
+			}
+			else {
+				tank1->shieldsCount--;
+				bullet2.clear();
+				break;
+			}
 		}
 
 		if (bullet2[i]->checkOutScreen()) {
@@ -176,6 +197,19 @@ void Game::checkTank(Tank* tank)
 			return;
 		}
 	}
+
+	if (isShieldAvail)
+		if (tank->checkCollide(*this->shieldItem))
+		{
+			isShieldAvail = false;
+			if (tank->shieldsCount < 3)
+				tank->shieldsCount++;
+		}
+	if(isShieldAvail)
+	if (tank->checkCollide(*this->shieldItem)) {
+		isShieldAvail = false;
+		tank->shieldsCount++;
+	}
 }
 
 
@@ -192,6 +226,32 @@ bool Game::checkWalls(GameObject obj)
 	return check;
 }
 
+
+void Game::initShield()
+{
+	for (int i = 0; i < 3; i++) {
+		this->shield1.push_back(new Shield(100.f + 100.f * i, 80.f, textures["shield"]));
+		this->shield2.push_back(new Shield(2000.f - 100.f * i, 80.f, textures["shield"]));
+	}
+	this->shieldItem = new Shield(1080.f, 200.f, textures["shield"]);
+	this->shieldItem->sprite.setScale(0.6, 0.6);
+}
+
+void Game::updateShield()
+{
+	sf::Time elapsed1 = clock.getElapsedTime();
+	if (isShieldAvail) {
+		clock.restart();
+	}
+	if(!isShieldAvail)
+	{
+		if (elapsed1 >= this->resetTime) {
+			this->isShieldAvail = true;
+			this->resetTime = sf::seconds(rand() % 5 + 10.f);
+			clock.restart();
+		}
+	}
+}
 
 void Game::updatePollEvents()
 {
@@ -254,6 +314,7 @@ void Game::updateInput()
 	checkTank(tank1);
 	checkTank(tank2);
 
+
 }
 
 
@@ -264,6 +325,7 @@ void Game::update()
 	if(!isEndGame)
 	this->updateBullet();
 	this->updateInput();
+	this->updateShield();
 }
 
 void Game::render()
@@ -293,6 +355,17 @@ void Game::render()
 		for (auto i : this->walls) {
 			i->render(*this->window);
 		}
+
+		for (int i = 0; i < this->tank1->shieldsCount; i++) {
+			this->shield1[i]->render(*this->window);
+		}
+		
+		for (int i = 0; i < this->tank2->shieldsCount; i++) {
+			this->shield2[i]->render(*this->window);
+		}
+
+		if(isShieldAvail)
+			this->shieldItem->render(*this->window);
 	}
 
 

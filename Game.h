@@ -4,11 +4,12 @@
 #include "SFML/Audio.hpp"
 #include "SFML/System.hpp"
 #include "SFML/Window.hpp"
+#include "cstdlib"
 
 #include"Tank.h"
 #include "Bullet.h"
 #include "Wall.h"
-
+#include "Shield.h"
 
 class Game
 {
@@ -34,8 +35,13 @@ public:
 
 	std::vector<Wall*> walls;
 
+	float i = rand() % 5 + 5.f;
+	sf::Time resetTime = sf::seconds(i);
+
 	Tank* tank1;
 	Tank* tank2;
+
+	sf::Clock clock;
 
 
 	void initTank1();
@@ -54,7 +60,16 @@ public:
 
 	bool checkWalls(GameObject obj);
 
-	
+	std::vector<Shield*> shield1;
+	std::vector<Shield*> shield2;
+
+	Shield* shieldItem;
+
+	bool isShieldAvail = false;
+
+	void initShield();
+
+	void updateShield();
 
 
 	void updatePollEvents();

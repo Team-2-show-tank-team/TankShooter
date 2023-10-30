@@ -13,7 +13,7 @@ public:
 
 	bool checkOutScreen();
 
-	int movementSpeed = 15.f;
+	int movementSpeed = 18.f;
 
 	float angle;
 

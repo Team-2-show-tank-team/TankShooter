@@ -12,6 +12,8 @@ public:
 
 	float movementSpeed = 4.f;
 
+	int shieldsCount = 0;
+
 	float rotateSpeed = 2.f;
 	 
 	bool checkWallCollide(std::vector<Wall*> walls);
