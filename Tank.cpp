@@ -26,14 +26,14 @@ void Tank::checkOutScreen()
 	sf::Vector2f spritePosition = this->sprite.getPosition();
 	sf::FloatRect spriteBounds = this->sprite.getGlobalBounds();
 
-	if (spritePosition.x < 0) {
-		spritePosition.x = 0;
+	if (spritePosition.x < spriteBounds.width / 2) {
+		spritePosition.x = spriteBounds.width / 2;
 	}
 	if (spritePosition.x + spriteBounds.width /2 > 2160) {
 		spritePosition.x = 2160 - spriteBounds.width / 2;
 	}
-	if (spritePosition.y < 0) {
-		spritePosition.y = 0;
+	if (spritePosition.y < spriteBounds.height / 2) {
+		spritePosition.y = spriteBounds.height / 2;
 	}
 	if (spritePosition.y + spriteBounds.height  / 2 > 1280) {
 		spritePosition.y = 1280 - spriteBounds.height/2;

@@ -12,19 +12,41 @@ Game::Game()
 	this->initWall();
 	this->initString();
 	this->initShield();
+	this->initSound();
+
+	this->music.play();
+
 }
 
 Game::~Game()
 {
+	delete this->window;
+	delete this->tank1;
+	delete this->tank2;
+	
+	for (auto wall : walls) {
+		delete wall;
+	}
+	delete this->shieldItem;
+	
+	for (auto butllet : this->bullet1) {
+		delete butllet;
+	}
+
+	for (auto butllet : this->bullet2) {
+		delete butllet;
+	}
+
+	
+
 }
 
+//Init
 void Game::initWindow()
 {
 	this->window = new sf::RenderWindow(sf::VideoMode(2160, 1280), "Tank Shooter");
 	this->window->setFramerateLimit(144);
 	this->window->setVerticalSyncEnabled(false);
-
-
 
 	backgroundTexture.loadFromFile("Textures\\background.png");
 	background.setTexture(backgroundTexture);
@@ -46,10 +68,35 @@ void Game::initString()
 	font.loadFromFile("arial.ttf");
 
 	this->text.setFont(font);
-	this->text.setCharacterSize(180);
-	this->text.setPosition(300, 600);
+	this->text.setCharacterSize(140);
+	this->text.setPosition(220, 450);
 	this->text.setFillColor(sf::Color::Red);
 	this->text.setStyle(sf::Text::Bold);
+}
+
+void Game::initSound()
+{
+	if (!this->tankShootbuffer.loadFromFile("Sound\\tankShoot.wav")) {
+		std::cout << "-1";
+	}
+	this->tankShootSound.setBuffer(tankShootbuffer);
+	this->tankShootSound.setVolume(50.f);
+
+	this->victorybuffer.loadFromFile("Sound\\victory.mp3");
+	this->victorySound.setBuffer(victorybuffer);
+
+	if (!this->taoCoKhienbuffer.loadFromFile("Sound\\TaoCoKhien.wav")) {
+		std::cout << "-1";
+	}
+	this->taoCoKhienSound.setBuffer(taoCoKhienbuffer);
+
+	this->HetKhienRoibuffer.loadFromFile("Sound\\HetKhienRoi.wav");
+	this->HetKhienRoiSound.setBuffer(HetKhienRoibuffer);
+
+	this->music.openFromFile("Sound\\music.mp3");
+	this->music.setLoop(true);
+	this->music.setVolume(60.f);
+
 }
 
 void Game::initWall()
@@ -113,7 +160,15 @@ void Game::initTextures()
 
 	this->textures["shield"] = texture8;
 
+	//explosion
+	sf::Texture texture9;
+	texture9.loadFromFile("Textures\\explosion.png");
+
+	this->textures["explosion"] = texture9;
+
 }
+
+//end init
 
 
 
@@ -124,12 +179,16 @@ void Game::updateBullet()
 		bullet1[i]->move();
 		
 		if (bullet1[i]->checkCollide(*this->tank2)) {
+			this->explosions.push_back(new Explosion(bullet1[i]->sprite.getPosition().x, bullet1[i]->sprite.getPosition().y, textures["explosion"]));
 			if(!tank2->shieldsCount){
+				this->music.pause();
+				this->victorySound.play();
 				text.setString("Player 1 wins! Hoang nguuu\nBam Backspace to restart");
 				this->isEndGame = true;
 				return;
 			}
 			else {
+				this->HetKhienRoiSound.play();
 				tank2->shieldsCount--;
 				bullet1.clear();
 				break;
@@ -137,6 +196,8 @@ void Game::updateBullet()
 		}
 
 		if (bullet1[i]->checkOutScreen()) {
+			this->explosions.push_back(new Explosion(bullet1[i]->sprite.getPosition().x, bullet1[i]->sprite.getPosition().y, textures["explosion"]));
+
 			bullet1.erase(bullet1.begin() + i);
 			i--;
 			continue;
@@ -144,6 +205,7 @@ void Game::updateBullet()
 
 		for (auto wall : walls) {
 			if (bullet1[i]->checkCollide(*wall)) {
+				this->explosions.push_back(new Explosion(bullet1[i]->sprite.getPosition().x, bullet1[i]->sprite.getPosition().y, textures["explosion"]));
 				bullet1.erase(bullet1.begin() + i);
 				i--;
 				break;
@@ -158,12 +220,16 @@ void Game::updateBullet()
 		bullet2[i]->move();
 
 		if (bullet2[i]->checkCollide(*this->tank1)) {
+			this->explosions.push_back(new Explosion(bullet2[i]->sprite.getPosition().x, bullet2[i]->sprite.getPosition().y, textures["explosion"]));
 			if(!tank1->shieldsCount){
+				this->music.pause();
+				this->victorySound.play();
 				text.setString("Player 2 wins! Dat nguuu\nBam Backspace to restart");
 				this->isEndGame = true;
 				return;
 			}
 			else {
+				this->HetKhienRoiSound.play();
 				tank1->shieldsCount--;
 				bullet2.clear();
 				break;
@@ -171,11 +237,13 @@ void Game::updateBullet()
 		}
 
 		if (bullet2[i]->checkOutScreen()) {
+			this->explosions.push_back(new Explosion(bullet2[i]->sprite.getPosition().x, bullet2[i]->sprite.getPosition().y, textures["explosion"]));
 			bullet2.erase(bullet2.begin() + i);
 			continue;
 		}
 		for (auto wall : walls) {
 			if (bullet2[i]->checkCollide(*wall)) {
+				this->explosions.push_back(new Explosion(bullet2[i]->sprite.getPosition().x, bullet2[i]->sprite.getPosition().y, textures["explosion"]));
 				bullet2.erase(bullet2.begin() + i);
 				i--;
 				break;
@@ -201,31 +269,23 @@ void Game::checkTank(Tank* tank)
 	if (isShieldAvail)
 		if (tank->checkCollide(*this->shieldItem))
 		{
+			this->taoCoKhienSound.play();
 			isShieldAvail = false;
 			if (tank->shieldsCount < 3)
 				tank->shieldsCount++;
 		}
-	if(isShieldAvail)
-	if (tank->checkCollide(*this->shieldItem)) {
-		isShieldAvail = false;
-		tank->shieldsCount++;
-	}
 }
 
-
-bool Game::checkWalls(GameObject obj)
+void Game::updateExplosion()
 {
-	bool check = true;
-
-	for (auto i : walls) {
-		if (i->checkCollide(obj)) {
-			check = false;
+	for (int i = 0; i < explosions.size(); i++) {
+		if (explosions[i]->checkDone()) {
+			explosions.erase(explosions.begin() + i);
+			i--;
+			continue;
 		}
 	}
-
-	return check;
 }
-
 
 void Game::initShield()
 {
@@ -234,6 +294,7 @@ void Game::initShield()
 		this->shield2.push_back(new Shield(2000.f - 100.f * i, 80.f, textures["shield"]));
 	}
 	this->shieldItem = new Shield(1080.f, 200.f, textures["shield"]);
+	this->shieldItem->sprite.setPosition(1080.f, rand() % 1000 + 150.f);
 	this->shieldItem->sprite.setScale(0.6, 0.6);
 }
 
@@ -246,7 +307,9 @@ void Game::updateShield()
 	if(!isShieldAvail)
 	{
 		if (elapsed1 >= this->resetTime) {
+
 			this->isShieldAvail = true;
+			this->shieldItem->sprite.setPosition(1080.f, rand() % 1000 + 150.f);
 			this->resetTime = sf::seconds(rand() % 5 + 10.f);
 			clock.restart();
 		}
@@ -266,11 +329,13 @@ void Game::updatePollEvents()
 				this->window->close();
 			if (e.key.code == sf::Keyboard::J) {
 				if (this->bullet1.size() < 1) {
+					this->tankShootSound.play();
 					this->bullet1.push_back(new Bullet(tank1->sprite.getPosition().x, tank1->sprite.getPosition().y, textures["bullet1"], tank1->sprite.getRotation()));
 				}
 			}
 			if (e.key.code == sf::Keyboard::Enter) {
 				if (this->bullet2.size() < 1) {
+					this->tankShootSound.play();
 					this->bullet2.push_back(new Bullet(tank2->sprite.getPosition().x, tank2->sprite.getPosition().y, textures["bullet2"], tank2->sprite.getRotation() + 180.f));
 				}
 			}
@@ -278,8 +343,12 @@ void Game::updatePollEvents()
 				if(this->isEndGame)
 				{
 					this->isEndGame = false;
+					this->isShieldAvail = false;
+					this->clock.restart();
+					this->music.play();
 					initTank1();
 					initTank2();
+					this->explosions.clear();
 				}
 			}
 		}
@@ -326,6 +395,7 @@ void Game::update()
 	this->updateBullet();
 	this->updateInput();
 	this->updateShield();
+	this->updateExplosion();
 }
 
 void Game::render()
@@ -366,6 +436,10 @@ void Game::render()
 
 		if(isShieldAvail)
 			this->shieldItem->render(*this->window);
+
+		for (auto explosion : explosions) {
+			explosion->render(*this->window);
+		}
 	}
 
 

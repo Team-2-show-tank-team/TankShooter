@@ -10,12 +10,27 @@
 #include "Bullet.h"
 #include "Wall.h"
 #include "Shield.h"
+#include "Explosion.h"
 
 class Game
 {
 public:
 	Game();
 	virtual ~Game();	
+
+	sf::SoundBuffer tankShootbuffer;
+	sf::Sound tankShootSound;
+
+	sf::SoundBuffer victorybuffer;
+	sf::Sound victorySound;
+
+	sf::SoundBuffer taoCoKhienbuffer;
+	sf::Sound taoCoKhienSound;
+
+	sf::SoundBuffer HetKhienRoibuffer;
+	sf::Sound HetKhienRoiSound;
+
+	sf::Music music;
 
 
 	sf::Text text;
@@ -33,6 +48,8 @@ public:
 	std::vector<Bullet*> bullet1;
 	std::vector<Bullet*> bullet2;
 
+	std::vector<Explosion*> explosions;
+
 	std::vector<Wall*> walls;
 
 	float i = rand() % 5 + 5.f;
@@ -41,27 +58,29 @@ public:
 	Tank* tank1;
 	Tank* tank2;
 
-	sf::Clock clock;
 
+
+	sf::Clock clock;
 
 	void initTank1();
 	void initTank2();
 
 	void initString();
 
+	void initSound();
+
 	void initWall();
 
 	void initTextures();
-
 
 	void updateBullet();
 
 	void checkTank(Tank* tank);
 
-	bool checkWalls(GameObject obj);
-
 	std::vector<Shield*> shield1;
 	std::vector<Shield*> shield2;
+
+	void updateExplosion();
 
 	Shield* shieldItem;
 
